@@ -47,15 +47,11 @@ void draw_background(t_circle *circle)
 		while (j < circle->width)
 		{
 			if (in_circle(i, j, circle))
-			{
 				printf("%c", circle->draw);
-			}
 			else
 				printf("%c", circle->background);
 			j++;
 		}
-		// if (in_circle(i, j, circle))
-		// 	printf("%c", circle->draw);
 		printf("\n");
 		i++;
 	}
