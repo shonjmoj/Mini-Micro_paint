@@ -16,6 +16,18 @@ typedef struct s_circle
 	float r;
 } t_circle;
 
+void	free_2d(char **tab)
+{
+	int	i = 0;
+	
+	while (tab[i])
+	{
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
+}
+
 int in_circle(int x, int y, t_circle *circle)
 {
 	float distance;
@@ -103,7 +115,7 @@ int main(int argc, char **argv)
 		int count = fscanf(fd, "%d %d %c\n", &circle.width, &circle.height, &circle.background);
 		if (!check_data(circle.width, circle.height))
 		{
-			
+			fclose(fd);
 			return 1;
 		}
 		tab = draw(&circle);
@@ -143,6 +155,7 @@ int main(int argc, char **argv)
 			printf("%s\n", tab[i]);
 			i++;
 		}
+		free_2d(tab);
 	}
 	fclose(fd);
 }
