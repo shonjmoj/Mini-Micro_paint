@@ -16,10 +16,10 @@ typedef struct s_circle
 	float r;
 } t_circle;
 
-void	free_2d(char **tab)
+void free_2d(char **tab)
 {
-	int	i = 0;
-	
+	int i = 0;
+
 	while (tab[i])
 	{
 		free(tab[i]);
@@ -40,33 +40,11 @@ int in_circle(int x, int y, t_circle *circle)
 	return (1);
 }
 
-int check_data(int w, int h)
+int check_data(t_circle *circle)
 {
-	if (w == 0 || w > 300 || h == 0 || h > 300)
-		return (0);
-	return (1);
-}
-
-void draw_background(t_circle *circle)
-{
-	int i;
-	int j;
-
-	i = 0;
-	while (i < circle->height)
-	{
-		j = 0;
-		while (j < circle->width)
-		{
-			if (in_circle(i, j, circle))
-				printf("%c", circle->draw);
-			else
-				printf("%c", circle->background);
-			j++;
-		}
-		printf("\n");
-		i++;
-	}
+	if ((circle->width > 0 && circle->width <= 300) && (circle->height > 0 && circle->height <= 300))
+		return (1);
+	return (0);
 }
 
 char **draw(t_circle *circle)
@@ -113,7 +91,7 @@ int main(int argc, char **argv)
 	else
 	{
 		int count = fscanf(fd, "%d %d %c\n", &circle.width, &circle.height, &circle.background);
-		if (!check_data(circle.width, circle.height))
+		if (!check_data(&circle))
 		{
 			fclose(fd);
 			return 1;
@@ -129,7 +107,7 @@ int main(int argc, char **argv)
 				printf("Error: Operation file corrupted\n");
 				return (1);
 			}
-			if (circle.r <= 0)
+			if (circle.r <= 0 || !(circle.type == 'c' || circle.type == 'C'))
 			{
 				fclose(fd);
 				return (1);
