@@ -20,6 +20,14 @@ int	check_data(t_circle *circle){
 	return(0);
 }
 
+void	ft_free(char **tab) {
+	int i = 0;
+	while (tab[i]) {
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
+}
 
 int in_circle(int x, int y, t_circle *circle) {
 	float distance;
@@ -107,6 +115,7 @@ int main(int argc, char **argv)
 			while(tab[i]) {
 				printf("%s\n", tab[i++]);
 			}
+			ft_free(tab);
 		}
 	} 
 }

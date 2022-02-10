@@ -9,6 +9,8 @@ typedef struct s_rect {
 	int width;
 	float r_h;
 	float r_w;
+	float Xbr;
+	float Ybr;
 	char background;
 	char asset;
 	char type;
@@ -16,10 +18,36 @@ typedef struct s_rect {
 	float y;
 } t_rect;
 
+void	ft_free(char **tab) {
+	int i = 0;
+	while (tab[i]) {
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
+}
+
 int check_data(t_rect *rect) {
 	if (rect->height == 0 || rect->height > 300 || rect->width == 0 || rect->width > 300)
 		return 0;
 	return 1;
+}
+
+void	get_corner(t_rect *rect) {
+	rect->Xbr = rect->x + rect->r_w;
+	rect->Ybr = rect->y + rect->r_h;
+}
+
+int	in_rectangle(int x, int y, t_rect *rect) {
+	get_corner(rect);
+
+	if ((rect->x <= (float)x && (float)x <= rect->Xbr) && (rect->y <= (float)y && (float)y <= rect->Ybr)) {
+		if (((float)x - rect->x < 1.0 || rect->Xbr - (float)x < 1.0 || (float)y - rect->y < 1.0 || rect->Ybr - (float)y < 1.0) && rect->type == 'r')
+			return (2);
+		else if (rect->type == 'R')
+			return (1);
+	}
+	return (0);
 }
 
 char**	draw(t_rect *rect){
@@ -54,27 +82,49 @@ int main(int argc, char **argv) {
 	else {
 		fd = fopen(argv[1], "r");
 		if (fd == NULL)
+		{
 			printf("Error: open1\n");
-		count = fscanf(fd, "%d %d %c\n", &rect.height, &rect.width, &rect.background);
+			return (1);
+		}
+		count = fscanf(fd, "%d %d %c\n", &rect.width, &rect.height, &rect.background);
 		if (!check_data(&rect))
 		{
 			printf("Error:open2\n");
 			fclose(fd);
+			return (1);
 		}
 		tab = draw(&rect);
 		while(1) {
-			count = fscanf(fd, "%c %f %f %f %f %c\n", &rect.type, &rect.x, &rect.y, &rect.r_h, &rect.r_w, &rect.asset);
+			count = fscanf(fd, "%c %f %f %f %f %c\n", &rect.type, &rect.x, &rect.y, &rect.r_w, &rect.r_h, &rect.asset);
 			if (count == -1)
 				break;
-			if (count != 6)
+			if (count != 6 || (rect.type != 'r' && rect.type != 'R'))
 			{
 				printf("Error:open3\n");
 				fclose(fd);
+				return (1);
+			}
+			i = 0;
+			while(i < rect.height)
+			{
+				j = 0;
+				while(j < rect.width)
+				{
+					if (in_rectangle(j, i, &rect) == 2)
+						tab[i][j] = rect.asset;
+					else if (in_rectangle(j, i, &rect) == 1)
+						tab[i][j] = rect.asset;
+					j++;
+				}
+				i++;
 			}
 		}
 		i = 0;
 		while(tab[i]) {
 			printf("%s\n", tab[i++]);
 		}
+		ft_free(tab);
 	}
+	fclose(fd);
 }
+// printf("Xbr = %f Ybr = %f\nx = %f y = %f\n", rect.Xbr, rect.Ybr, rect.x, rect.y);
