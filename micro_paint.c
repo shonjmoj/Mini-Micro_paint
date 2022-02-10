@@ -28,9 +28,9 @@ void	ft_free(char **tab) {
 }
 
 int check_data(t_rect *rect) {
-	if (rect->height == 0 || rect->height > 300 || rect->width == 0 || rect->width > 300)
-		return 0;
-	return 1;
+	if (rect->height > 0 && rect->height <=300 && rect->width > 0 && rect->width <= 300)
+		return 1;
+	return 0;
 }
 
 void	get_corner(t_rect *rect) {
@@ -41,8 +41,8 @@ void	get_corner(t_rect *rect) {
 int	in_rectangle(int x, int y, t_rect *rect) {
 	get_corner(rect);
 
-	if ((rect->x <= (float)x && (float)x <= rect->Xbr) && (rect->y <= (float)y && (float)y <= rect->Ybr)) {
-		if (((float)x - rect->x < 1.0 || rect->Xbr - (float)x < 1.0 || (float)y - rect->y < 1.0 || rect->Ybr - (float)y < 1.0) && rect->type == 'r')
+	if ((rect->x <= x && x <= rect->Xbr) && (rect->y <= y && y <= rect->Ybr)) {
+		if ((x - rect->x < 1.0 || rect->Xbr - x < 1.0 || y - rect->y < 1.0 || rect->Ybr - y < 1.0) && rect->type == 'r')
 			return (2);
 		else if (rect->type == 'R')
 			return (1);
@@ -75,21 +75,21 @@ int main(int argc, char **argv) {
 	char **tab;
 	char count;
 	t_rect rect;
-	FILE* fd;
+	FILE* fd = NULL;
 	if (argc <= 1) {
-		printf("Error:argumrents\n");
+		printf("Error: argumrents\n");
 	}
 	else {
 		fd = fopen(argv[1], "r");
 		if (fd == NULL)
 		{
-			printf("Error: open1\n");
+			printf("Error: Operation file corrupted\n");
 			return (1);
 		}
 		count = fscanf(fd, "%d %d %c\n", &rect.width, &rect.height, &rect.background);
 		if (!check_data(&rect))
 		{
-			printf("Error:open2\n");
+			printf("Error: Operation file corrupted\n");
 			fclose(fd);
 			return (1);
 		}
@@ -98,9 +98,9 @@ int main(int argc, char **argv) {
 			count = fscanf(fd, "%c %f %f %f %f %c\n", &rect.type, &rect.x, &rect.y, &rect.r_w, &rect.r_h, &rect.asset);
 			if (count == -1)
 				break;
-			if (count != 6 || (rect.type != 'r' && rect.type != 'R'))
+			if (count != 6 || (rect.type != 'r' && rect.type != 'R') || rect.r_h <= 0 || rect.r_w <= 0)
 			{
-				printf("Error:open3\n");
+				printf("Error: Operation file corrupted\n");
 				fclose(fd);
 				return (1);
 			}
