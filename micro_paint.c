@@ -78,6 +78,7 @@ int main(int argc, char **argv) {
 	FILE* fd = NULL;
 	if (argc <= 1) {
 		printf("Error: argumrents\n");
+		return (1);
 	}
 	else {
 		fd = fopen(argv[1], "r");
@@ -87,10 +88,9 @@ int main(int argc, char **argv) {
 			return (1);
 		}
 		count = fscanf(fd, "%d %d %c\n", &rect.width, &rect.height, &rect.background);
-		if (!check_data(&rect))
+		if (!check_data(&rect) || count != 3)
 		{
 			printf("Error: Operation file corrupted\n");
-			fclose(fd);
 			return (1);
 		}
 		tab = draw(&rect);
@@ -101,7 +101,6 @@ int main(int argc, char **argv) {
 			if (count != 6 || (rect.type != 'r' && rect.type != 'R') || rect.r_h <= 0 || rect.r_w <= 0)
 			{
 				printf("Error: Operation file corrupted\n");
-				fclose(fd);
 				return (1);
 			}
 			i = 0;
@@ -125,6 +124,4 @@ int main(int argc, char **argv) {
 		}
 		ft_free(tab);
 	}
-	fclose(fd);
 }
-// printf("Xbr = %f Ybr = %f\nx = %f y = %f\n", rect.Xbr, rect.Ybr, rect.x, rect.y);
